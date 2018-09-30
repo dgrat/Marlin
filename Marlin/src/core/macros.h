@@ -204,12 +204,38 @@
 
 #define CEILING(x,y) (((x) + (y) - 1) / (y))
 
+// Avoid double evaluation of arguments on ABS
 #undef ABS
 #ifdef __cplusplus
-  template <class T> static inline constexpr const T ABS(const T v) { return v >= 0 ? v : -v; }
+  template <class T> static inline constexpr const T ABS(const T v) {
+    return v >= 0 ? v : -v;
+  }
 #else
-  #define ABS(a) ({__typeof__(a) _a = (a); _a >= 0 ? _a : -_a;})
+  #define ABS(a) \
+    ({__typeof__(a) _a = (a); \
+      _a >= 0 ? _a : -_a;})
+
 #endif
+
+template <class T, class U> 
+static inline constexpr auto smaller(const T first, const U second) -> decltype(first + second) {
+  return first < second ? first : second;
+}
+
+template <class T, class U, class ... Args> 
+static inline constexpr auto smaller(const T first, const U second, const Args ... rest) -> decltype(first + second) {
+  return smaller(smaller(first, second), rest ...);
+}
+
+template <class T, class U> 
+static inline constexpr auto bigger(const T first, const U second) -> decltype(first + second) {
+  return first >= second ? first : second;
+}
+
+template <class T, class U, class ... Args> 
+static inline constexpr auto bigger(const T first, const U second, const Args ... rest) -> decltype(first + second) {
+  return bigger(bigger(first, second), rest ...);
+}  
 
 #define UNEAR_ZERO(x) ((x) < 0.000001f)
 #define NEAR_ZERO(x) WITHIN(x, -0.000001f, 0.000001f)

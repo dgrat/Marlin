@@ -172,11 +172,11 @@
         break;
 
       case 2: // Raise by Z-park height
-        do_blocking_move_to_z(MIN(current_position[Z_AXIS] + park.z, Z_MAX_POS), fr_z);
+        do_blocking_move_to_z(smaller(current_position[Z_AXIS] + park.z, Z_MAX_POS), fr_z);
         break;
 
       default: // Raise to at least the Z-park height
-        do_blocking_move_to_z(MAX(park.z, current_position[Z_AXIS]), fr_z);
+        do_blocking_move_to_z(bigger(park.z, current_position[Z_AXIS]), fr_z);
     }
 
     do_blocking_move_to_xy(park.x, park.y, fr_xy);
